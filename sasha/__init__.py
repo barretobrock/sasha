@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from .utils import Viktor
+from .utils import Sasha
 
 
 from ._version import get_versions

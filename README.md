@@ -6,12 +6,12 @@ This is really something I built for personal use. There are credential collecti
 
 ## Installation
 ```bash
-pip3 install git+https://github.com/barretobrock/viktor.git#egg=viktor
+pip3 install git+https://github.com/barretobrock/sasha.git#egg=sasha
 ```
 
 ## Upgrade
 ```bash
-pip3 install git+https://github.com/barretobrock/viktor.git#egg=viktor --upgrade
+pip3 install git+https://github.com/barretobrock/sasha.git#egg=sasha --upgrade
 ```
 
 ## Run

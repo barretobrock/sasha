@@ -6,11 +6,11 @@ from datetime import datetime
 from random import randint
 from flask import Flask, request, make_response
 from slacktools import SlackEventAdapter
-from .utils import Viktor
+from .utils import Sasha
 
 
-bot_name = 'viktor'
-DEBUG = os.environ['VIKTOR_DEBUG'] == '1'
+bot_name = 'sasha'
+DEBUG = os.environ['SASHA_DEBUG'] == '1'
 
 key_path = os.path.join(os.path.expanduser('~'), 'keys')
 key_dict = {}
@@ -18,7 +18,7 @@ for t in ['SIGNING_SECRET', 'XOXB_TOKEN', 'XOXP_TOKEN', 'VERIFY_TOKEN', 'ONBOARD
     with open(os.path.join(key_path, f'{bot_name.upper()}_SLACK_{t}')) as f:
         key_dict[t.lower()] = f.read().strip()
 
-Bot = Viktor(bot_name, key_dict['xoxb_token'], key_dict['xoxp_token'],
+Bot = Sasha(bot_name, key_dict['xoxb_token'], key_dict['xoxp_token'],
              ss_key=key_dict['spreadsheet_key'], onboarding_key=key_dict['onboarding_key'], debug=DEBUG)
 # Register the cleanup function as a signal handler
 signal.signal(signal.SIGINT, Bot.cleanup)
@@ -34,10 +34,10 @@ users_list = Bot.st.get_channel_members('CLWCPQ2TV')  # get users in general
 app = Flask(__name__)
 
 # Events API listener
-bot_events = SlackEventAdapter(key_dict['signing_secret'], "/viktor/vikapi/events", app)
+bot_events = SlackEventAdapter(key_dict['signing_secret'], "/sasha/vikapi/events", app)
 
 
-@app.route('/viktor/vikapi/slash', methods=['GET', 'POST'])
+@app.route('/sasha/vikapi/slash', methods=['GET', 'POST'])
 def handle_slash():
     """Handles a slash command"""
     event_data = request.form
@@ -48,7 +48,7 @@ def handle_slash():
     return make_response('', 200)
 
 
-@app.route('/viktor/vikapi/actions', methods=['GET', 'POST'])
+@app.route('/sasha/vikapi/actions', methods=['GET', 'POST'])
 def handle_action():
     """Handle a response when a user clicks a button from Wizzy in Slack"""
     event_data = json.loads(request.form["payload"])
@@ -76,7 +76,7 @@ def handle_action():
     return make_response('', 200)
 
 
-@app.route("/viktor/cron/new_emojis", methods=['POST'])
+@app.route("/sasha/cron/new_emojis", methods=['POST'])
 def handle_cron_new_emojis():
     """Check for newly uploaded emojis (triggered by cron task that sends POST req every 10 mins)"""
     # Check emojis uploaded (every 10 mins)
@@ -97,7 +97,7 @@ def handle_cron_new_emojis():
     return make_response('', 200)
 
 
-@app.route("/viktor/cron/profile_update", methods=['POST'])
+@app.route("/sasha/cron/profile_update", methods=['POST'])
 def handle_cron_profile_update():
     """Check for newly updated profile elements (triggered by cron task that sends POST req every 10 mins)"""
     # Check updated profile (every 10 mins)

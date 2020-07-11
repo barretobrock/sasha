@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-os.environ['VIKTOR_DEBUG'] = "0"
-from viktor.app import app
+os.environ['SASHA_DEBUG'] = "0"
+from sasha.app import app
 
 
-@app.route('/viktor')
+@app.route('/sasha')
 def index():
-    return 'VIKTOR'
+    return 'SASHA'
 
 
 if __name__ == '__main__':

@@ -1,10 +1,10 @@
 # Configuration for the repo
 REPO:
-  NAME: viktor
+  NAME: sasha
   URL: https://github.com/barretobrock/${REPO_NAME}
   GIT_URL: git+${REPO_URL}.git#egg=${REPO_NAME}
   DIR: ${HOME}/extras/${REPO_NAME}
-  VENV: ${HOME}/venvs/viktor/bin/python
-  DESC: A slack bot for homeautomation & other things
+  VENV: ${HOME}/venvs/sasha/bin/python
+  DESC: A slack bot for homeautomation
   DEPS:
     - git+https://github.com/barretobrock/slacktools.git#egg=slacktools
