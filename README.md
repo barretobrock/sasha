@@ -4,24 +4,9 @@ Home automation robot that interfaces with Slack
 ## Info
 This is really something I built for personal use. There are credential collection methods that rely on prebuilt routines that might prove specific to only my use case. Should anyone discover this and wish to use it, feel free to contact me and I'll work on adapting this to wider use cases.
 
-## Installation
-```bash
-pip3 install git+https://github.com/barretobrock/sasha.git#egg=sasha
-```
-
-## Upgrade
-```bash
-pip3 install git+https://github.com/barretobrock/sasha.git#egg=sasha --upgrade
-```
-
-## Run
-```bash
-python3 run.py
-```
-
 ## App Info
 
-### Scopes
+### Slack Scopes
 #### Bot
  - channels.history
  - channels.read
@@ -39,3 +24,24 @@ python3 run.py
  - users.read
 #### User
  - search.read
+
+## Installation
+```bash
+pip3 install git+https://github.com/barretobrock/sasha.git#egg=sasha
+```
+
+## Upgrade
+```bash
+pip3 install git+https://github.com/barretobrock/sasha.git#egg=sasha --upgrade
+```
+
+## Run
+```bash
+python3 run.py
+```
+
+## Debug
+```bash
+python3 run_debug.py
+```
+

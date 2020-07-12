@@ -6,7 +6,7 @@ import pandas as pd
 from typing import List, Optional, Tuple, Union
 from datetime import datetime as dt
 from random import randint
-from slacktools import SlackBotBase, GSheetReader, BlockKitBuilder
+from slacktools import SlackBotBase, BlockKitBuilder
 from .linguistics import Linguistics
 from ._version import get_versions
 
@@ -14,25 +14,25 @@ from ._version import get_versions
 class Sasha:
     """Handles messaging to and from Slack API"""
 
-    def __init__(self, log_name: str, xoxb_token: str, xoxp_token: str, ss_key: str, onboarding_key: str,
-                 debug: bool = False):
+    def __init__(self, log_name: str, creds: dict, debug: bool = False):
         """
         Args:
             log_name: str, name of the kavalkilu.Log object to retrieve
-            xoxb_token: str, bot token to use
-            xoxp_token: str, user token to use
-            ss_key: str, spreadsheet containing various things Sasha reads in
-            onboarding_key: str, link to onboarding documentation
+            creds: dict, contains tokens & other secrets for connecting & interacting with Slack
+                required keys:
+                    team: str, the Slack workspace name
+                    xoxp-token: str, the user token
+                    xoxb-token: str, the bot token
+                optional keys:
+                    cookie: str, cookie used for special processes outside
+                        the realm of common API calls e.g., emoji uploads
             debug: bool, if True, will use a different set of triggers for testing purposes
         """
         self.debug = debug
         self.bot_name = f'Sasha {"Debugnova" if debug else "Produdnika"}'
         self.triggers = ['sasha', 's!']
-        self.main_channel = ''  # test
-        self.emoji_channel = ''  # emoji_suggestions
-        self.general_channel = ''  # general
-        self.alerts_channel = ''  # #alerts
-        self.approved_users = ['', '']    #b, m
+        self.test_channel = 'C016XDV8XM0'  # test
+        self.approved_users = ['U015WMFQ0DV', 'U016N5RJZ9C']    # b, m
         self.bkb = BlockKitBuilder()
         self.ling = Linguistics()
         # Bot version stuff
@@ -132,24 +132,19 @@ class Sasha:
             }
         }
         # Initiate the bot, which comes with common tools for interacting with Slack's API
-        self.st = SlackBotBase(log_name, triggers=self.triggers, team='orbitalkettlerelay',
-                               main_channel=self.main_channel, xoxp_token=xoxp_token, xoxb_token=xoxb_token,
-                               commands=commands, cmd_categories=cmd_categories)
+        self.st = SlackBotBase(log_name, triggers=self.triggers, creds=creds, test_channel=self.test_channel,
+                               commands=commands, cmd_categories=cmd_categories, debug=debug)
         self.bot_id = self.st.bot_id
         self.user_id = self.st.user_id
         self.bot = self.st.bot
 
-        self.st.message_main_channel(blocks=self.bootup_msg)
+        self.st.message_test_channel(blocks=self.bootup_msg)
 
         # Lastly, build the help text based on the commands above and insert back into the commands dict
         commands[r'^help']['value'] = self.st.build_help_block(intro, avi_url, avi_alt)
         # Update the command dict in SlackBotBase
         self.st.update_commands(commands)
 
-        # These data structures will help to better time the dissemination of notifications
-        #   (e.g., instead of notifying for every time a new emoji is updated,
-        #   check every x mins for a change in the data structure that would hold newly uploaded emojis)
-        self.new_emoji_set = set()
         # Build a dictionary of all users in the workspace (for determining changes in name, status)
         self.users_dict = {x['id']: x for x in self.st.get_channel_members('CM3E3E82J', True)}
         # This dictionary is for tracking updates to these dicts
@@ -160,10 +155,11 @@ class Sasha:
         notify_block = [
             self.bkb.make_context_section(f'{self.bot_name} died. :death-drops::party-dead::death-drops:')
         ]
-        self.st.message_main_channel(blocks=notify_block)
+        self.st.message_test_channel(blocks=notify_block)
         sys.exit(0)
 
-    def process_incoming_action(self, user: str, channel: str, action: dict) -> Optional:
+    @staticmethod
+    def process_incoming_action(user: str, channel: str, action: dict) -> Optional:
         """Handles an incoming action (e.g., when a button is clicked)"""
         if action['type'] == 'multi_static_select':
             # Multiselect

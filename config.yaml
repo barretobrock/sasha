@@ -7,4 +7,5 @@ REPO:
   VENV: ${HOME}/venvs/sasha/bin/python
   DESC: A slack bot for homeautomation
   DEPS:
+    - git+https://github.com/barretobrock/kavalkilu.git#egg=kavalkilu
     - git+https://github.com/barretobrock/slacktools.git#egg=slacktools
